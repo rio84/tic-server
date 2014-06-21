@@ -7,16 +7,24 @@ go;
  name VARCHAR(20) UNIQUE KEY ,
   passwd VARCHAR(18),
   status TINYINT,
-  pin  CHAR(4),
   time INT(10)
+
+
+  pin  CHAR(4),
+  role TINYINT,
+  loginId INTEGER NOT NULL UNIQUE KEY ,
+  parentId INTEGER,
+  status INT(1)
  */
 DELIMITER //
-CREATE PROCEDURE p_register(IN in_name VARCHAR(20) ,IN in_psw VARCHAR(18),IN in_pin CHAR(4) )
+CREATE PROCEDURE p_register(IN in_name VARCHAR(20) ,IN in_psw VARCHAR(18),IN in_pin CHAR(4),IN in_pid INTEGER)
 BEGIN
-  SELECT id into @id FROM login WHERE name=in_name;
-  IF @id IS NULL THEN
-    INSERT INTO login(name,passwd,pin,status,time) VALUES (in_name,in_psw,in_pin,0,UNIX_TIMESTAMP());
-    SELECT LAST_INSERT_ID() AS result;
+  SELECT COUNT(*) into @count FROM login WHERE name=in_name;
+  IF @count=0 THEN
+    INSERT INTO login(name,passwd,status,pin,time) VALUES (in_name,in_psw,0,in_pin,UNIX_TIMESTAMP());
+    SELECT LAST_INSERT_ID() INTO @loginid;
+    INSERT INTO userinfo(loginId,parentId,pin,role,status) VALUES (@loginid,in_pid,in_pin,0,0);
+    SELECT @loginid AS result;
   ELSE
     SELECT 'NAME_EXSIST' AS result;
   END IF;

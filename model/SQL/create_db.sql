@@ -24,6 +24,8 @@ CREATE TABLE login(
 
 CREATE TABLE userinfo(
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  pin  CHAR(4),
+  role TINYINT,
   loginId INTEGER NOT NULL UNIQUE KEY ,
   parentId INTEGER,
   status INT(1)

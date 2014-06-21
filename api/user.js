@@ -7,8 +7,16 @@ var model=require('../model/user');
 var Login=require('../lib/login');
 
 exports.index=function(req,res,path){
-    res.json({code:0,path:path.toString()});
+    var api=path.shift();
+    //console.log('user',api)
+    if(api in exports){
+        exports[api].call(this,req,res,path);
+    }else{
+        res.json({code:404,errCode:'NO_USER_API'});
+    }
+
 }
+
 exports.login = function(req, res){
     var q=req.query;
     model.login(q,function(data){
@@ -21,10 +29,13 @@ exports.login = function(req, res){
     });
 
 };
+
+//ok
 exports.register = function(req, res){
-    var q=req.query;
+    var q=req.body;
+   // console.log('register.q',q);
     model.register({
-        phone: q.phone,
+        name: q.name,
         passwd: q.passwd
     },function(data){
 
@@ -33,6 +44,7 @@ exports.register = function(req, res){
     });
 
 };
+
 exports.userinfo = function(req, res){
     var q=req.query;
     if(q.type=='set'){

@@ -16,55 +16,57 @@ var pool  = mysql.createPool(config.mysql);
 
 
 exports.register=function(data,cb){
-    /*
-    * data={phone:111,passwd}
-    * */
     var key;
-     if(key=Validtion.validate(data)){
+    if(key=Validtion.validate(data)){
         cb({
             errCode:'DATA_VALUE_ERR:'+key
         });
         return;
     }
 
-    var sqlStr="INSERT INTO login SET ?",
-        pin=Com.rndPin(),
-        q={
-            phone:data.phone,
-            passwd:data.passwd,
-            status:1,
-            pin:pin,
-            time:Util.now()
-        };
-    pool.query(sqlStr,q, function(err, result) {
-        var res={};
-        if (err){
-            res.errCode=err.code;
+    data.pin=Com.rndPin();
+    data.pid=data.pid||1;
+//console.log('register.data',data);
 
-        }else{
-            res.userId=parseUserId(result.insertId,pin);
+    pool.query("CALL p_register('"+data.name+"','"+data.passwd+"','"+data.pin+"',"+data.pid+")",
+        function(err, result,b) {
+           // console.log(err,result,b);
+            /*
+            [ [ { result: 1 } ],
+             { fieldCount: 0,
+             affectedRows: 0,
+             insertId: 0,
+             serverStatus: 2,
+             warningCount: 0,
+             message: '',
+             protocol41: true,
+             changedRows: 0 } ]
+            * */
+            var res={code:1};
+            if (err){
+                res.errCode=err.code;
 
-            //userinfo
-            pool.query('INSERT INTO userinfo SET ?',{
-                loginId:result.insertId,
-                status:0
+            }else{
+                var queryResult=result[0][0]['result'];
+                res.code=0;
+                if(/\d+/.test(queryResult)){
+                    data.loginId=queryResult;
+                    res.data=data;
+                }else{
+                    res.code=1;
+                    res.errCode=queryResult;
+                }
 
-            },function(er,result2){
-                console.log('insert userinfo',er,result2);
-            });
-        }
-
-
-        cb(res);
-    });
-
- };
+            }
+            cb(res);
+        })
+};
 
 exports.login=function(data,cb){
-    var sqlStr="SELECT id,pin FROM login WHERE phone ='"+
-        data.phone+
+    var sqlStr="SELECT id,pin FROM login WHERE name ='"+
+        data.name+
         "' AND passwd ='"+
-        data.passwd+
+        data.psw+
         "' AND status=1";
 
     pool.query(sqlStr, function(err, rows, fields) {

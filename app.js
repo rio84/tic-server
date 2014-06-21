@@ -31,11 +31,9 @@ if ('development' == app.get('env')) {
 }
 
 //app.get('/', routes.index);
-app.get('/api', api.index);
+//app.get('/api', api.index);
 app.get('/api/*', api.index);
-app.post('/api/*', function(){
-    //console.log('post')
-});
+app.post('/api/*',api.index);
 
 //app.get('/users', user.list);
 
