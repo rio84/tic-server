@@ -58,6 +58,20 @@ exports.subuser = function(req, res){
 
 };
 
+exports.updateuser = function(req, res){
+    if(!Login.checkUser(req)){return res.json({code:-1,errCode:'USER_NOT_LOGIN'});};
+    var q=req.query,
+        p=req.body;
+    p.userId= q.userId;
+    // console.log('register.q',q);
+    model.setSubUser(p,function(data){
+
+        //console.log('login query data',data)
+        res.json(data);
+    });
+
+};
+
 exports.userinfo = function(req, res){
     var q=req.query;
     if(q.type=='set'){

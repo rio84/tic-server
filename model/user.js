@@ -145,6 +145,39 @@ exports.getSubUsers=function(data,cb){
     });
 };
 
+
+
+exports.setSubUser=function(data,cb){
+    parseUserId(data);
+    var sdata=parseUserId({userId:data.uid});
+
+//console.log('data',data)
+    /*
+    *
+    * */
+
+    var sqlStr="UPDATE userinfo a LEFT JOIN login b ON a.loginId=b.id SET a.role="+data.role+",a.status="+data.status+", b.status="+data.status+" WHERE a.loginId="+sdata.id+" AND a.parentId="+data.id;
+
+     console.log('setSubUser sql:',sqlStr)
+
+    pool.query(sqlStr, function(err, result, fields) {
+        //console.log('getSubUsers rows:',rows)
+        var res={code:1};
+        if (err){
+            res.errCode=err.code;
+        }else if(result.affectedRows){
+
+            console.log('result',result);
+            res.code=0;
+
+        }
+        cb(res);
+
+
+    });
+};
+
+
 exports.setUserInfo=function(data,cb){
     var key;
     if(key=Validtion.validate(data)){
