@@ -7,6 +7,8 @@ var Util=require('../lib/util');
 var Com=require('./common');
 var parseUserId=Com.parseUserId;
 
+var Login=require('../lib/login');
+
 
 var mysql = require('mysql');
 var config=require('../configs');

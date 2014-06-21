@@ -7,6 +7,7 @@ var model=require('../model/user');
 var Login=require('../lib/login');
 
 exports.index=function(req,res,path){
+
     var api=path.shift();
     //console.log('user',api)
     if(api in exports){
@@ -19,13 +20,13 @@ exports.index=function(req,res,path){
 
 exports.login = function(req, res){
     var q=req.body;
-    model.login(q,function(data){
+    model.login(q,function(r){
 
         //console.log('login query data',data)
-        if(data.userId){
-            data[Login.URL_TOKEN_KEY]=Login.login();
+        if(r.data.userId){
+            r[Login.URL_TOKEN_KEY]=Login.login(r.data.userId);
         }
-        res.json(data);
+        res.json(r);
     });
 
 };
@@ -46,6 +47,7 @@ exports.register = function(req, res){
 };
 
 exports.subuser = function(req, res){
+    if(!Login.checkUser(req)){return res.json({code:-1,errCode:'USER_NOT_LOGIN'});};
     var q=req.query;
     // console.log('register.q',q);
     model.getSubUsers(q,function(data){
