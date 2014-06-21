@@ -28,7 +28,8 @@ CREATE TABLE userinfo(
   role TINYINT,-- 9 管理员,1 一般人员, 0 不能操作
   loginId INTEGER NOT NULL UNIQUE KEY ,
   parentId INTEGER,
-  status INT(1)--暂时不用
+  status INT(1),--暂时不用,
+  brief VARCHAR(140)
 
 );
 

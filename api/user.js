@@ -23,7 +23,7 @@ exports.login = function(req, res){
     model.login(q,function(r){
 
         //console.log('login query data',data)
-        if(r.data.userId){
+        if(r.data&&r.data.userId&& r.data.status==1){
             r[Login.URL_TOKEN_KEY]=Login.login(r.data.userId);
         }
         res.json(r);
@@ -35,10 +35,7 @@ exports.login = function(req, res){
 exports.register = function(req, res){
     var q=req.body;
    // console.log('register.q',q);
-    model.register({
-        name: q.name,
-        passwd: q.passwd
-    },function(data){
+    model.register(q,function(data){
 
         //console.log('login query data',data)
         res.json(data);

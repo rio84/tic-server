@@ -7,7 +7,7 @@ var Util=require('../lib/util');
 var Com=require('./common');
 var parseUserId=Com.parseUserId;
 
-var Login=require('../lib/login');
+//var Login=require('../lib/login');
 
 
 var mysql = require('mysql');
@@ -28,9 +28,11 @@ exports.register=function(data,cb){
 
     data.pin=Com.rndPin();
     data.pid=data.pid||1;
-//console.log('register.data',data);
 
-    pool.query("CALL p_register('"+data.name+"','"+data.passwd+"','"+data.pin+"',"+data.pid+")",
+    var sqlStr="CALL p_register('"+data.name+"','"+data.passwd+"','"+data.pin+"',"+data.pid+",'"+data.brief+"')";
+
+   // console.log('register.data',data,sqlStr);
+    pool.query(sqlStr,
         function(err, result,b) {
            // console.log(err,result,b);
             /*
@@ -69,7 +71,7 @@ exports.login=function(data,cb){
         data.name+
         "' AND passwd ='"+
         data.passwd+
-        "' AND status IN(0,1)";
+        "' ";
 
    // console.log('login sql:',sqlStr)
 
@@ -110,7 +112,7 @@ exports.getSubUsers=function(data,cb){
     parseUserId(data);
 //console.log('data',data)
 
-    var sqlStr="SELECT b.id,b.pin,a.role,b.name,b.time " +
+    var sqlStr="SELECT b.id,b.pin,a.role,b.name,b.time,a.brief " +
         "FROM userinfo a LEFT JOIN login b ON a.loginId=b.id " +
         "WHERE a.parentId='"+data.id+"'";
     if('status' in data){
