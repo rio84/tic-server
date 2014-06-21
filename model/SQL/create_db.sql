@@ -33,6 +33,8 @@ CREATE TABLE userinfo(
 );
 
 
+
+
 CREATE TABLE ticket(
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
   pin INT(4),

@@ -63,21 +63,27 @@ exports.register=function(data,cb){
 };
 
 exports.login=function(data,cb){
-    var sqlStr="SELECT id,pin FROM login WHERE name ='"+
+    var sqlStr="SELECT id,pin,status FROM login WHERE name ='"+
         data.name+
         "' AND passwd ='"+
-        data.psw+
-        "' AND status=1";
+        data.passwd+
+        "' AND status IN(0,1)";
+
+   // console.log('login sql:',sqlStr)
 
     pool.query(sqlStr, function(err, rows, fields) {
-        var res={};
+
+        var res={code:1};
         if (err){
             res.errCode=err.code;
         }else if(rows.length){
 
             //res.userId=rows[0].id+rows[0].pin;
-            res.userId=parseUserId(rows[0]).userId;
             res.code=0;
+            res.data={
+                userId:parseUserId(rows[0]).userId,
+                status:rows[0].status
+            };
         }else{
 
             res.errCode='NO_MATCH_RECORD';
@@ -94,6 +100,46 @@ exports.login=function(data,cb){
         */
 
        // console.log('The solution is: ', rows[0].solution);
+    });
+};
+
+
+exports.getSubUsers=function(data,cb){
+    parseUserId(data);
+//console.log('data',data)
+
+    var sqlStr="SELECT b.id,b.pin,a.role,b.name,b.time " +
+        "FROM userinfo a LEFT JOIN login b ON a.loginId=b.id " +
+        "WHERE a.parentId='"+data.id+"'";
+    if('status' in data){
+        sqlStr+=' AND b.status='+data.status;
+    }
+
+   // console.log('getSubUsers sql:',sqlStr)
+
+    pool.query(sqlStr, function(err, rows, fields) {
+        //console.log('getSubUsers rows:',rows)
+        var res={code:1};
+        if (err){
+            res.errCode=err.code;
+        }else if(rows.length){
+
+            //res.userId=rows[0].id+rows[0].pin;
+            rows.forEach(function(n,i){
+                parseUserId(n);
+                delete n.id;
+                delete n.pin;
+            });
+            res.code=0;
+            res.data=rows;
+        }else{
+
+            res.errCode='NO_MATCH_RECORD';
+
+        }
+        cb(res);
+
+
     });
 };
 

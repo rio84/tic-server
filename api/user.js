@@ -18,7 +18,7 @@ exports.index=function(req,res,path){
 }
 
 exports.login = function(req, res){
-    var q=req.query;
+    var q=req.body;
     model.login(q,function(data){
 
         //console.log('login query data',data)
@@ -38,6 +38,17 @@ exports.register = function(req, res){
         name: q.name,
         passwd: q.passwd
     },function(data){
+
+        //console.log('login query data',data)
+        res.json(data);
+    });
+
+};
+
+exports.subuser = function(req, res){
+    var q=req.query;
+    // console.log('register.q',q);
+    model.getSubUsers(q,function(data){
 
         //console.log('login query data',data)
         res.json(data);
