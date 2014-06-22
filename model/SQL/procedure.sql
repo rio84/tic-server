@@ -59,7 +59,7 @@ CREATE TABLE ticket(
 
 DELIMITER //
 CREATE PROCEDURE p_create_ticket(IN in_loginid INTEGER,
-  IN in_pin INT(4),
+  IN in_pin CHAR(4),
   IN in_price DECIMAL,
   IN in_comment VARCHAR(140),
   IN in_headCount INT(2),

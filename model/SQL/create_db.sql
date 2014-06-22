@@ -38,7 +38,7 @@ CREATE TABLE userinfo(
 
 CREATE TABLE ticket(
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
-  pin INT(4),
+  pin ChAR(4),
   loginId INTEGER NOT NULL,
   price DECIMAL ,
   status INT(1),

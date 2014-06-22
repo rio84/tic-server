@@ -6,7 +6,8 @@
 //var User=require('./user.js');
 
 var apis={
-    user:require('./user.js')
+    user:require('./user.js'),
+    ticket:require('./ticket.js')
 };
 exports.index = function(req, res){
     res.set({
@@ -18,7 +19,7 @@ exports.index = function(req, res){
     // console.log(req)
     var path=req.params[0].split('/');
     var api=path.shift();
-    console.log('api',api,req.params.length);
+   // console.log('api',api,req.params.length);
 
 
     if(api in apis){

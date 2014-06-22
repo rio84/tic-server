@@ -1,13 +1,14 @@
 exports.rnd0to9=function(){
     return Math.floor(10*Math.random());
 };
-exports.rndPin=function(){
-    var count= 4,r='';
+exports.rndPin=function(len){
+    var count= len||4,r='';
     while(count--){
         r+=this.rnd0to9();
     }
     return r;
 };
+
 exports.parseUserId=function(data){
     if(typeof data=='object'){
         if(data.userId){
