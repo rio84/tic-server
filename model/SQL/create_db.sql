@@ -24,6 +24,7 @@ CREATE TABLE login(
 
 CREATE TABLE userinfo(
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
+  nick VARCHAR(20),
   pin  CHAR(4),
   role TINYINT,-- 9 管理员,1 一般人员, 0 不能操作
   loginId INTEGER NOT NULL UNIQUE KEY ,
@@ -41,7 +42,7 @@ CREATE TABLE ticket(
   pin ChAR(4),
   loginId INTEGER NOT NULL,
   price DECIMAL ,
-  status INT(1),
+  status INT(1),--1 有效, 2 -- 验证过了
   comment VARCHAR(140),
 
   headCount INT(2),

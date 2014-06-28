@@ -23,7 +23,7 @@ BEGIN
   IF @count=0 THEN
     INSERT INTO login(name,passwd,status,pin,time) VALUES (in_name,in_psw,0,in_pin,UNIX_TIMESTAMP());
     SELECT LAST_INSERT_ID() INTO @loginid;
-    INSERT INTO userinfo(loginId,parentId,pin,role,status,brief) VALUES (@loginid,in_pid,in_pin,0,0,in_brief);
+    INSERT INTO userinfo(loginId,nick,parentId,pin,role,status,brief) VALUES (@loginid,in_name,in_pid,in_pin,0,0,in_brief);
     SELECT @loginid AS result;
   ELSE
     SELECT 'NAME_EXSIST' AS result;
@@ -77,3 +77,21 @@ END
 //
 DELIMITER ;
 
+
+
+
+DELIMITER //
+CREATE PROCEDURE p_query_userticket(IN in_loginid INTEGER)
+  BEGIN
+   SELECT * FROM ticket WHERE loginId IN(SELECT loginId FROM userinfo WHERE parentId=in_loginid);
+
+    SELECT *,(SELECT COUNT(*) FROM ticket WHERE loginId=userinfo.loginId) AS tcount FROM userinfo WHERE parentId=in_loginid;
+
+    INSERT INTO ticket(pin,loginId,price,status,comment,headCount,tradeNo,buyer,checkCode,createTime,expire)
+    VALUES (in_pin,in_loginid,in_price,1,in_comment,in_headCount,in_tradeNo,in_buyer,in_checkCode,UNIX_TIMESTAMP(),in_expire);
+    SELECT LAST_INSERT_ID() AS result;
+
+
+  END
+//
+DELIMITER ;

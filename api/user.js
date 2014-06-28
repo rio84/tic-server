@@ -54,6 +54,19 @@ exports.subuser = function(req, res){
     });
 
 };
+exports.subticket = function(req, res){
+    if(!Login.checkUser(req)){return res.json({code:-1,errCode:'USER_NOT_LOGIN'});};
+    var q=req.query;
+    // console.log('register.q',q);
+    model.getSubUserTickets(q,function(data){
+
+        //console.log('login query data',data)
+        res.json(data);
+    });
+
+};
+
+
 
 exports.updateuser = function(req, res){
     if(!Login.checkUser(req)){return res.json({code:-1,errCode:'USER_NOT_LOGIN'});};

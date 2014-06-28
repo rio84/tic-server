@@ -145,7 +145,7 @@ exports.setSubUser=function(data,cb){
 
     var sqlStr="UPDATE userinfo a LEFT JOIN login b ON a.loginId=b.id SET a.role="+data.role+",a.status="+data.status+", b.status="+data.status+" WHERE a.loginId="+sdata.id+" AND a.parentId="+data.id;
 
-     console.log('setSubUser sql:',sqlStr)
+    // console.log('setSubUser sql:',sqlStr)
 
     pool.query(sqlStr, function(err, result, fields) {
         //console.log('getSubUsers rows:',rows)
@@ -164,3 +164,39 @@ exports.setSubUser=function(data,cb){
     });
 };
 
+exports.getSubUserTickets=function(data,cb){
+
+
+    parseUserId(data);
+//console.log('data',data)
+
+    var sqlStr="SELECT nick,CONCAT(loginId,pin) AS userId,(SELECT COUNT(*) FROM ticket WHERE loginId=userinfo.loginId) AS tcount,"+
+        "(SELECT COUNT(*) FROM ticket WHERE loginId=userinfo.loginId AND status=2) AS vcount, "+
+        "(SELECT createTime FROM ticket WHERE loginId=userinfo.loginId LIMIT 0,1) AS lastTime "+
+        "FROM userinfo WHERE parentId="+data.id;
+    if('status' in data){
+        sqlStr+=' AND status='+data.status;
+    }
+
+    // console.log('getSubUsers sql:',sqlStr)
+
+    pool.query(sqlStr, function(err, rows, fields) {
+        //console.log('getSubUsers rows:',rows)
+        var res={code:1};
+        if (err){
+            res.errCode=err.code;
+        }else if(rows.length){
+
+
+            res.code=0;
+            res.data=rows;
+        }else{
+
+            res.errCode='NO_MATCH_RECORD';
+
+        }
+        cb(res);
+
+
+    });
+}
